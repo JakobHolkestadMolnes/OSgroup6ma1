@@ -19,20 +19,59 @@ heavy_computation();
 
 }
 
-fn main() {
-    // start a thread
-    let handle = std::thread::spawn(|| {
+
+struct SingleThreadedServer {
+    listener: TcpListener,
+}
+impl SingleThreadedServer {
+    fn new() -> Self {
         let listener = TcpListener::bind("0.0.0.0:8080").unwrap();
-    for stream in listener.incoming() {
-        match stream {
-            Ok(stream) => {
-                handle_client(stream);
-            }
-            Err(e) => {
-                println!("Error: {}", e);
+        Self { listener }
+}
+    fn run(&self) {
+        for stream in self.listener.incoming() {
+            match stream {
+                Ok(stream) => {
+                    handle_client(stream);
+                }
+                Err(e) => {
+                    println!("Error: {}", e);
+                }
             }
         }
     }
+}
+
+struct MultiThreadedServer {
+    listener: TcpListener,
+}
+impl MultiThreadedServer {
+    fn new() -> Self {
+        let listener = TcpListener::bind("0.0.0.0:8080").unwrap();
+        Self { listener }
+}
+    fn run(&self) {
+        for stream in self.listener.incoming() {
+            match stream {
+                Ok(stream) => {
+                    std::thread::spawn(move || {
+                        handle_client(stream);
+                    });
+                }
+                Err(e) => {
+                    println!("Error: {}", e);
+                }
+            }
+        }
+    }
+}
+
+
+fn main() {
+    // start a thread
+    let handle = std::thread::spawn(|| {
+        let server = MultiThreadedServer::new();
+        server.run();
     });
 
     //wait for the thread to finish
