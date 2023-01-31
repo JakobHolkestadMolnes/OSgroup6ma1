@@ -6,7 +6,7 @@ Simple single and multithreaded web server. We chose to solve the assignment in 
 
 ## How to run
 You can either compile the code yourself or use the precompiled binaries in the [releases](https://github.com/JakobHolkestadMolnes/OSgroup6ma1/releases).  
-In order to compile you will need cargo installed.  
+In order to compile you will need [cargo](https://doc.rust-lang.org/cargo/getting-started/installation.html) installed.  
 
 In order to run, simply run the binary with arguments, `single` or `multi`.  
 `$ ./osgroup6ma1 [single|multi]`  
