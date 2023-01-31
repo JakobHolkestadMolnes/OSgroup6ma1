@@ -1,6 +1,11 @@
 use std::io::{Read, Write};
 use std::net::TcpStream;
 
+pub trait Server {
+    fn new() -> Self;
+    fn run(&self);
+}
+
 fn html_body() -> (i64, String) {
     let mut body = String::new();
     body.push_str("<!DOCTYPE html>");

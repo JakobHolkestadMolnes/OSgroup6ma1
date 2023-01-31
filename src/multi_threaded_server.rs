@@ -1,15 +1,15 @@
-use crate::commons::handle_client;
+use crate::commons::{handle_client, Server};
 use std::net::TcpListener;
 
 pub struct MultiThreadedServer {
     listener: TcpListener,
 }
-impl MultiThreadedServer {
-    pub fn new() -> Self {
+impl Server for MultiThreadedServer {
+    fn new() -> Self {
         let listener = TcpListener::bind("0.0.0.0:8080").unwrap();
         Self { listener }
     }
-    pub fn run(&self) {
+    fn run(&self) {
         for stream in self.listener.incoming() {
             match stream {
                 Ok(stream) => {
