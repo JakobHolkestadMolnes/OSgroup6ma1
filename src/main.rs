@@ -5,12 +5,13 @@ use commons::Server;
 use multi_threaded_server::MultiThreadedServer;
 use single_threaded_server::SingleThreadedServer;
 
+#[derive(Debug)]
 enum ServerType {
     SingleThreaded,
     MultiThreaded,
 }
 
-fn create_server(server_type: ServerType) -> Box<dyn Server> {
+fn create_server(server_type: &ServerType) -> Box<dyn Server> {
     match server_type {
         ServerType::SingleThreaded => Box::new(SingleThreadedServer::new()),
         ServerType::MultiThreaded => Box::new(MultiThreadedServer::new()),
@@ -33,7 +34,8 @@ fn main() {
 
     // create a thread and run the server
     let handle = std::thread::spawn(move || {
-        let server = create_server(server_type);
+        let server = create_server(&server_type);
+        println!("Starting: {server_type:?}");
         server.run();
     });
 
