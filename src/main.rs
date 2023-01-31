@@ -3,31 +3,38 @@ mod multi_threaded_server;
 mod single_threaded_server;
 use commons::Server;
 use multi_threaded_server::MultiThreadedServer;
+use single_threaded_server::SingleThreadedServer;
 
 enum ServerType {
     SingleThreaded,
     MultiThreaded,
 }
-fn main() {
-    // start a thread
-    let handle = std::thread::spawn(|| {
-        // create a single threaded server or a multi threaded server based on the command line argument
-        let server = match std::env::args().nth(1).expect("Missing argument").as_str() {
-            "single" => ServerType::SingleThreaded,
-            "multi" => ServerType::MultiThreaded,
-            _ => panic!("Invalid argument, expected 'single' or 'multi'"),
-        };
 
-        match server {
-            ServerType::SingleThreaded => {
-                let server = single_threaded_server::SingleThreadedServer::new();
-                server.run();
-            }
-            ServerType::MultiThreaded => {
-                let server = MultiThreadedServer::new();
-                server.run();
-            }
+fn create_server(server_type: ServerType) -> Box<dyn Server> {
+    match server_type {
+        ServerType::SingleThreaded => Box::new(SingleThreadedServer::new()),
+        ServerType::MultiThreaded => Box::new(MultiThreadedServer::new()),
+    }
+}
+fn main() {
+    // get type of server from command line argument
+    let server_type = match std::env::args().nth(1).expect("Missing argument").as_str() {
+        "single" => ServerType::SingleThreaded,
+        "multi" => ServerType::MultiThreaded,
+        "-h" | "--help" => {
+            println!("Usage: ./osgroup6ma1 [single|multi]");
+            std::process::exit(0);
         }
+        _ => {
+            println!("Invalid argument. Use -h or --help for help.");
+            std::process::exit(1);
+        },
+    };
+
+    // create a thread and run the server
+    let handle = std::thread::spawn(move || {
+        let server = create_server(server_type);
+        server.run();
     });
 
     //wait for the thread to finish

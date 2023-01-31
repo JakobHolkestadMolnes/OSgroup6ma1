@@ -2,7 +2,9 @@ use std::io::{Read, Write};
 use std::net::TcpStream;
 
 pub trait Server {
-    fn new() -> Self;
+    fn new() -> Self
+    where
+        Self: Sized;
     fn run(&self);
 }
 
