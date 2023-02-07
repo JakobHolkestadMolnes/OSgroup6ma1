@@ -33,9 +33,10 @@ pub fn html_response(content_length: i64, body: String) -> String {
     html
 }
 
+/// Simulate a heavy computation, sleeps for 2 seconds.
 pub fn heavy_computation() {
-    // sleep for 5 seconds
-    std::thread::sleep(std::time::Duration::from_secs(5));
+    // sleep for 2 seconds
+    std::thread::sleep(std::time::Duration::from_secs(2));
 }
 pub fn handle_client(mut stream: TcpStream) {
     let mut buffer = [0; 1024];
