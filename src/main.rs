@@ -19,17 +19,23 @@ fn create_server(server_type: &ServerType) -> Box<dyn Server> {
 }
 fn main() {
     // get type of server from command line argument
-    let server_type = match std::env::args().nth(1).expect("Missing argument").as_str() {
-        "single" => ServerType::SingleThreaded,
-        "multi" => ServerType::MultiThreaded,
-        "-h" | "--help" => {
-            println!("Usage: ./osgroup6ma1 [single|multi]");
-            std::process::exit(0);
-        }
-        _ => {
-            println!("Invalid argument. Use -h or --help for help.");
-            std::process::exit(1);
+    let server_type = match std::env::args().nth(1) {
+        Some(arg) => match arg.as_str() {
+            "single" => ServerType::SingleThreaded,
+            "multi" => ServerType::MultiThreaded,
+            "-h" | "--help" => {
+                println!("Usage: ./osgroup6ma1 [single|multi]");
+                std::process::exit(0);
+            }
+            _ => {
+                println!("Invalid argument. Use -h or --help for help.");
+                std::process::exit(1);
+            }
         },
+        None => {
+            println!("No argument provided. Use -h or --help for help.");
+            std::process::exit(1);
+        }
     };
 
     // create a thread and run the server
